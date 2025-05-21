@@ -1,4 +1,4 @@
-package event;
+package controller;
 
 public class EventController {
 }

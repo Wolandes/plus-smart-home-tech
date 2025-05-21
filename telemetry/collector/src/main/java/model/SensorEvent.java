@@ -1,9 +1,8 @@
-package event;
+package model;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import model.SensorEventType;
 
 import java.time.Instant;
 
