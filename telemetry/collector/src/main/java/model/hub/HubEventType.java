@@ -1,4 +1,4 @@
-package model;
+package model.hub;
 
 public enum HubEventType {
     DEVICE_ADDED_EVENT,
