@@ -7,4 +7,8 @@ public interface CollectorKafkaClient {
     Producer<String, SpecificRecordBase> getProducer();
 
     void stop();
+
+    String getTelemetryHubsTopic();
+
+    String getTelemetrySensorsTopic();
 }

@@ -1,14 +1,17 @@
 package kafka.config;
 
+import lombok.Getter;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import java.time.Duration;
 import java.util.Properties;
 
 @Configuration
@@ -21,18 +24,28 @@ public class CollectorKafkaClientConfiguration {
 
             private Producer<String, SpecificRecordBase> producer;
 
+            @Getter
+            @Value("${kafka.topics.telemetry-hubs}")
+            private String telemetryHubsTopic;
+
+            @Getter
+            @Value("${kafka.topics.telemetry-sensors}")
+            private String telemetrySensorsTopic;
+
+            @Value("${kafka.bootstrap-servers}")
+            private String bootstrapServers;
+
             @Override
             public Producer<String, SpecificRecordBase> getProducer() {
                 if (producer == null) {
                     initProducer();
                 }
-
                 return producer;
             }
 
             private void initProducer() {
                 Properties config = new Properties();
-                config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+                config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
                 config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
                 config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CollectorKafkaAvroSerializer.class);
 
@@ -42,7 +55,8 @@ public class CollectorKafkaClientConfiguration {
             @Override
             public void stop() {
                 if (producer != null) {
-                    producer.close();
+                    producer.flush();
+                    producer.close(Duration.ofMillis(10));
                 }
             }
         };

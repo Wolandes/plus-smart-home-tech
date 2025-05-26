@@ -3,7 +3,6 @@ package kafka.controller;
 import jakarta.annotation.PreDestroy;
 import jakarta.validation.Valid;
 import kafka.config.CollectorKafkaClient;
-import kafka.config.CollectorKafkaTopics;
 import kafka.mapper.HubEventMapper;
 import kafka.mapper.SensorEventMapper;
 import kafka.model.hub.HubEvent;
@@ -23,12 +22,12 @@ public class EventController {
 
     @PostMapping("/hubs")
     public void collectHubEvent(@RequestBody @Valid HubEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_HUBS_V1, HubEventMapper.INSTANCE.toHubEventAvro(event)));
+        kafkaClient.getProducer().send(new ProducerRecord<>(kafkaClient.getTelemetryHubsTopic(), HubEventMapper.INSTANCE.toHubEventAvro(event)));
     }
 
     @PostMapping("/sensors")
     public void collectSensorEvent(@RequestBody @Valid SensorEvent event) {
-        kafkaClient.getProducer().send(new ProducerRecord<>(CollectorKafkaTopics.TELEMETRY_SENSORS_V1, SensorEventMapper.INSTANCE.toSensorEventAvro(event)));
+        kafkaClient.getProducer().send(new ProducerRecord<>(kafkaClient.getTelemetrySensorsTopic(), SensorEventMapper.INSTANCE.toSensorEventAvro(event)));
     }
 
     @PreDestroy
