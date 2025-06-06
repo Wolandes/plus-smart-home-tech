@@ -1,7 +1,6 @@
 package kafka.config;
 
 import lombok.Getter;
-import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import com.google.protobuf.Message;
+import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 
 import java.time.Duration;
 import java.util.Properties;
@@ -22,7 +23,7 @@ public class CollectorKafkaClientConfiguration {
     CollectorKafkaClient getClient() {
         return new CollectorKafkaClient() {
 
-            private Producer<String, SpecificRecordBase> producer;
+            private Producer<String, Message> producer;
 
             @Getter
             @Value("${kafka.topics.telemetry-hubs}")
@@ -36,7 +37,7 @@ public class CollectorKafkaClientConfiguration {
             private String bootstrapServers;
 
             @Override
-            public Producer<String, SpecificRecordBase> getProducer() {
+            public Producer<String, Message> getProducer() {
                 if (producer == null) {
                     initProducer();
                 }
@@ -47,7 +48,7 @@ public class CollectorKafkaClientConfiguration {
                 Properties config = new Properties();
                 config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
                 config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-                config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CollectorKafkaAvroSerializer.class);
+                config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaProtobufSerializer.class);
 
                 producer = new KafkaProducer<>(config);
             }

@@ -1,51 +1,62 @@
 package kafka.mapper;
 
 import kafka.model.sensor.*;
+import kafka.model.sensor.SensorEvent;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import ru.yandex.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.grpc.telemetry.event.*;
+import com.google.protobuf.Timestamp;
+
+import java.time.Instant;
 
 @Mapper
 public interface SensorEventMapper {
     SensorEventMapper INSTANCE = Mappers.getMapper(SensorEventMapper.class);
 
-    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
-    SensorEventAvro toSensorEventAvro(SensorEvent event);
+    default SensorEventProto toSensorEventProto(SensorEvent event) {
 
-    ClimateSensorAvro toClimateSensorAvro(ClimateSensorEvent event);
+        Timestamp protoTimestamp = Timestamp.newBuilder()
+                .setSeconds(event.getTimestamp().getEpochSecond())
+                .setNanos(event.getTimestamp().getNano())
+                .build();
 
-    LightSensorAvro toLightSensorAvro(LightSensorEvent event);
+        SensorEventProto.Builder builder = SensorEventProto.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(protoTimestamp);
 
-    MotionSensorAvro toMotionSensorAvro(MotionSensorEvent event);
-
-    SwitchSensorAvro toSwitchSensorAvro(SwitchSensorEvent event);
-
-    TemperatureSensorAvro toTemperatureSensorAvro(TemperatureSensorEvent event);
-
-    @Named("getPayload")
-    static Object getPayload(SensorEvent event) {
-        if (event instanceof ClimateSensorEvent climateSensorEvent) {
-            return SensorEventMapper.INSTANCE.toClimateSensorAvro(climateSensorEvent);
+        switch (event.getType()) {
+            case CLIMATE_SENSOR_EVENT -> builder.setClimateSensor(toClimateSensorProto((ClimateSensorEvent) event));
+            case LIGHT_SENSOR_EVENT -> builder.setLightSensor(toLightSensorProto((LightSensorEvent) event));
+            case MOTION_SENSOR_EVENT -> builder.setMotionSensor(toMotionSensorProto((MotionSensorEvent) event));
+            case SWITCH_SENSOR_EVENT -> builder.setSwitchSensor(toSwitchSensorProto((SwitchSensorEvent) event));
+            case TEMPERATURE_SENSOR_EVENT ->
+                    builder.setTemperatureSensor(toTemperatureSensorProto((TemperatureSensorEvent) event));
+            default -> throw new IllegalArgumentException("Неизвестный тип: " + event.getType());
         }
 
-        if (event instanceof LightSensorEvent lightSensorEvent) {
-            return SensorEventMapper.INSTANCE.toLightSensorAvro(lightSensorEvent);
-        }
+        return builder.build();
+    }
 
-        if (event instanceof MotionSensorEvent motionSensorEvent) {
-            return SensorEventMapper.INSTANCE.toMotionSensorAvro(motionSensorEvent);
-        }
+    ClimateSensorProto toClimateSensorProto(ClimateSensorEvent event);
 
-        if (event instanceof SwitchSensorEvent switchSensorEvent) {
-            return SensorEventMapper.INSTANCE.toSwitchSensorAvro(switchSensorEvent);
-        }
+    LightSensorProto toLightSensorProto(LightSensorEvent event);
 
-        if (event instanceof TemperatureSensorEvent temperatureSensorEvent) {
-            return SensorEventMapper.INSTANCE.toTemperatureSensorAvro(temperatureSensorEvent);
+    MotionSensorProto toMotionSensorProto(MotionSensorEvent event);
+
+    SwitchSensorProto toSwitchSensorProto(SwitchSensorEvent event);
+
+    TemperatureSensorProto toTemperatureSensorProto(TemperatureSensorEvent event);
+
+    default Timestamp map(Instant instant) {
+        if (instant == null) {
+            return null;
         }
-        throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
     }
 }
