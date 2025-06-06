@@ -1,10 +1,10 @@
 package kafka.config;
 
-import org.apache.avro.specific.SpecificRecordBase;
+import com.google.protobuf.Message;
 import org.apache.kafka.clients.producer.Producer;
 
 public interface CollectorKafkaClient {
-    Producer<String, SpecificRecordBase> getProducer();
+    Producer<String, Message> getProducer();
 
     void stop();
 

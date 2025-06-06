@@ -1,47 +1,46 @@
 package kafka.mapper;
 
 import kafka.model.hub.*;
-import org.apache.avro.specific.SpecificRecordBase;
+import kafka.model.hub.HubEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import ru.yandex.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.grpc.telemetry.event.*;
+import com.google.protobuf.Timestamp;
 
 @Mapper
 public interface HubEventMapper {
     HubEventMapper INSTANCE = Mappers.getMapper(HubEventMapper.class);
 
-    @Mapping(target = "payload", source = ".", qualifiedByName = "getPayload")
-    HubEventAvro toHubEventAvro(HubEvent event);
+    default HubEventProto toHubEventProto(HubEvent event) {
+
+        Timestamp protoTimestamp = Timestamp.newBuilder()
+                .setSeconds(event.getTimestamp().getEpochSecond())
+                .setNanos(event.getTimestamp().getNano())
+                .build();
+
+        HubEventProto.Builder builder = HubEventProto.newBuilder()
+                .setHubId(event.getHubId())
+                .setTimestamp(protoTimestamp);
+
+        switch (event.getType()) {
+            case DEVICE_ADDED -> builder.setDeviceAddedEvent(toDeviceAddedEventProto((DeviceAddedEvent) event));
+            case DEVICE_REMOVED -> builder.setDeviceRemovedEvent(toDeviceRemovedEventProto((DeviceRemovedEvent) event));
+            case SCENARIO_ADDED -> builder.setScenarioAddedEvent(toScenarioAddedEventProto((ScenarioAddedEvent) event));
+            case SCENARIO_REMOVED ->
+                    builder.setScenarioRemovedEvent(toScenarioRemovedEventProto((ScenarioRemovedEvent) event));
+            default -> throw new IllegalArgumentException("Неизвестный тип : " + event.getType());
+        }
+        return builder.build();
+    }
+
 
     @Mapping(source = "deviceType", target = "type")
-    DeviceAddedEventAvro toDeviceAddedEventAvro(DeviceAddedEvent event);
+    DeviceAddedEventProto toDeviceAddedEventProto(DeviceAddedEvent event);
 
-    DeviceRemovedEventAvro toDeviceRemovedEventAvro(DeviceRemovedEvent event);
+    DeviceRemovedEventProto toDeviceRemovedEventProto(DeviceRemovedEvent event);
 
-    ScenarioAddedEventAvro toScenarioAddedEventAvro(ScenarioAddedEvent event);
+    ScenarioAddedEventProto toScenarioAddedEventProto(ScenarioAddedEvent event);
 
-    ScenarioRemovedEventAvro toScenarioRemovedEventAvro(ScenarioRemovedEvent event);
-
-    @Named("getPayload")
-    static Object getPayload(HubEvent event) {
-        if (event instanceof DeviceAddedEvent deviceAddedEvent) {
-            return HubEventMapper.INSTANCE.toDeviceAddedEventAvro(deviceAddedEvent);
-        }
-
-        if (event instanceof DeviceRemovedEvent deviceRemovedEvent) {
-            return HubEventMapper.INSTANCE.toDeviceRemovedEventAvro(deviceRemovedEvent);
-        }
-
-        if (event instanceof ScenarioAddedEvent scenarioAddedEvent) {
-            return HubEventMapper.INSTANCE.toScenarioAddedEventAvro(scenarioAddedEvent);
-        }
-
-        if (event instanceof ScenarioRemovedEvent scenarioRemovedEvent) {
-            return HubEventMapper.INSTANCE.toScenarioRemovedEventAvro(scenarioRemovedEvent);
-        }
-
-        throw new RuntimeException("Не удалось выполнить преобразование типа " + event.getClass().getName() + " в тип " + SpecificRecordBase.class.getName());
-    }
+    ScenarioRemovedEventProto toScenarioRemovedEventProto(ScenarioRemovedEvent event);
 }
