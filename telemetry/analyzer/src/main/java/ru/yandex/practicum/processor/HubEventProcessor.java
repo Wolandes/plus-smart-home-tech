@@ -45,8 +45,8 @@ public class HubEventProcessor implements Runnable {
                 consumer.commitAsync();
             }
 
-        } catch (WakeupException ignores) {
-            // игнорируем - закрываем консьюмер и продюсер в блоке finally
+        } catch (WakeupException e) {
+            log.info("Получен WakeupException во время HubEventProcessor — инициируем завершение работы консьюмера");
         } catch (Exception e) {
             log.error("Ошибка во время обработки события хаба ", e);
         } finally {
@@ -74,9 +74,9 @@ public class HubEventProcessor implements Runnable {
                 new OffsetAndMetadata(consumerRecord.offset() + 1)
         );
 
-        if(count % 10 == 0) {
+        if (count % 10 == 0) {
             consumer.commitAsync(currentOffsets, (offsets, exception) -> {
-                if(exception != null) {
+                if (exception != null) {
                     log.warn("Ошибка во время фиксации оффсетов: {}", offsets, exception);
                 }
             });

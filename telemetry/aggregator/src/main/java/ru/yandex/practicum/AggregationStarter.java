@@ -47,8 +47,8 @@ public class AggregationStarter {
                 consumer.commitAsync();
             }
 
-        } catch (WakeupException ignores) {
-            // игнорируем - закрываем консьюмер и продюсер в блоке finally
+        } catch (WakeupException e) {
+            log.info("Получен WakeupException во время AggregationStarter — инициируем завершение работы консьюмера");
         } catch (Exception e) {
             log.error("Ошибка во время обработки событий от датчиков", e);
         } finally {
