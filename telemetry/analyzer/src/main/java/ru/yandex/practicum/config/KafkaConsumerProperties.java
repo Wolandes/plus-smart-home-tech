@@ -7,7 +7,7 @@ import ru.yandex.practicum.config.KafkaConsumerSettings;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "kafka.config")
+@ConfigurationProperties(prefix = "analyzer.kafka.config")
 public class KafkaConsumerProperties {
     private String bootstrapServers;
     private KafkaConsumerSettings hubConsumer;
