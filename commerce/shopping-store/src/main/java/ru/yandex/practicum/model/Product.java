@@ -1,6 +1,7 @@
 package ru.yandex.practicum.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.model.ProductCategory;
@@ -27,7 +28,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-
+    /**
+     * Имя продукта
+     */
     String productName;
 
     /**
@@ -39,6 +42,11 @@ public class Product {
      * Ссылка на картинку во внешнем хранилище или SVG.
      */
     String imageSrc;
+
+    /**
+     * Доступность товара
+     */
+    QuantityState quantityState;
 
     /**
      * Статус, перечисляющий состояние остатка как свойства товара

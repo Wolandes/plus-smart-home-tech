@@ -36,6 +36,12 @@ public class ProductDto {
     String imageSrc;
 
     /**
+     * Доступность товара
+     */
+    @NotNull(message = "Состояние товара должен быть указан.")
+    QuantityState quantityState;
+
+    /**
      * Статус, перечисляющий состояние остатка как свойства товара
      */
     @NotNull(message = "Состояние количества должен быть указан.")
@@ -44,7 +50,7 @@ public class ProductDto {
     /**
      * Состояние товара
      */
-    @NotNull(message = "Состояние товара должен быть указан.")
+    @NotNull(message = "Категория устройств должен быть указан.")
     ProductCategory productCategory;
 
     /**
