@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.UUID;
+
 /**
  *Трансферный объект, содержащий данные о продукте.
  */
@@ -15,8 +17,7 @@ public class ProductDto {
     /**
      * Уникальный идентификатор продукта
      */
-
-    Long id;
+    UUID productId;
 
     /**
      * Имя продукта

@@ -8,6 +8,8 @@ import ru.yandex.practicum.model.ProductCategory;
 import ru.yandex.practicum.model.ProductState;
 import ru.yandex.practicum.model.QuantityState;
 
+import java.util.UUID;
+
 
 /**
  * Продукт
@@ -25,12 +27,14 @@ public class Product {
      * Уникальный идентификатор продукта.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "product_id")
+    UUID productId;
 
     /**
      * Имя продукта
      */
+    @Column(name = "product_name")
     String productName;
 
     /**
@@ -41,23 +45,27 @@ public class Product {
     /**
      * Ссылка на картинку во внешнем хранилище или SVG.
      */
+    @Column(name = "image_src")
     String imageSrc;
 
     /**
      * Доступность товара
      */
+    @Column(name = "quantity_state")
     QuantityState quantityState;
 
     /**
      * Статус, перечисляющий состояние остатка как свойства товара
      */
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "product_state")
     ProductState productState;
 
     /**
      * Состояние товара
      */
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "product_category")
     ProductCategory productCategory;
 
     /**
