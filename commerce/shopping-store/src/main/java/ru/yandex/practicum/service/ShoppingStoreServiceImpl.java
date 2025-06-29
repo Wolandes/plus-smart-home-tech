@@ -1,4 +1,117 @@
 package ru.yandex.practicum.service;
 
-public class ShoppingStoreServiceImpl {
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.error.NotFoundException;
+import ru.yandex.practicum.mapper.ProductMapper;
+import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.repository.ProductRepository;
+
+import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
+import java.util.UUID;
+
+/**
+ * Сервис для сущности "Продукт".
+ */
+@Service
+@RequiredArgsConstructor
+public class ShoppingStoreServiceImpl implements ShoppingStoreService {
+    /**
+     * Хранилище данных для сущности "Продукт".
+     */
+    private final ProductRepository repository;
+
+    /**
+     * Маппер для сущности "Продукт".
+     */
+    private final ProductMapper mapper;
+
+    /**
+     * Получение списка товаров по типу в пагинированном виде
+     *
+     * @param category - Категория устройств
+     * @param pageable - Пагинация
+     * @return ProductDto - Список товаров в пагинацией
+     */
+    @Override
+    public Page<ProductDto> getProducts(ProductCategory category, Pageable pageable) {
+        return repository.findAllByProductCategory(category, pageable)
+                .map(mapper::toProductDto);
+    }
+
+    /**
+     * Создание нового товара в ассортименте
+     *
+     * @param productDto - Добавляемый товар.
+     * @return ProductDto - Созданный товар с id
+     */
+    @Override
+    @Transactional
+    public ProductDto createNewProduct(ProductDto productDto) {
+        Product product = mapper.toProduct(productDto);
+
+        return mapper.toProductDto(repository.save(product));
+    }
+
+    /**
+     * Обновление товара в ассортименте, например уточнение описания, характеристик и т.д.
+     *
+     * @param productDto обновляемый товар
+     * @return обновленный товар
+     */
+    @Override
+    @Transactional
+    public ProductDto updateProduct(ProductDto productDto) {
+        Product product = repository.findById(productDto.getProductId()).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ productDto.getProductId()) );
+        Product newProduct = repository.save(mapper.toProduct(productDto));
+        return mapper.toProductDto(newProduct);
+    }
+
+    /**
+     * Удалить товар из ассортимента магазина. Функция для менеджерского состава.
+     *
+     * @param uuid  id товара
+     * @return void
+     */
+    @Override
+    @Transactional
+    public boolean removeProductFromStore(UUID uuid){
+        Product product = repository.findById(uuid).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ uuid) );
+        product.setProductState(ProductState.DEACTIVATE);
+        repository.save(product);
+        return true;
+    }
+
+    /**
+     * Запрос на изменение статуса товара в магазине, например: "Закончился", "Мало" и т.д.
+     *
+     * @param productId id "Продукта".
+     * @param quantityState Доступность товара
+     * @return Изменение ProductDto
+     */
+    @Override
+    @Transactional
+    public ProductDto setProductQuantityState(UUID productId, QuantityState quantityState){
+        Product product = repository.findById(productId).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ productId) );
+        product.setQuantityState(quantityState);
+        repository.save(product);
+        return mapper.toProductDto(product);
+    }
+
+    /**
+     * Получить сведения по товару из БД.
+     *
+     * @param productId     id сущности БД
+     * @return Сущность DTO ProductDto
+     */
+    @Override
+    @Transactional
+    public ProductDto getProduct(UUID productId){
+        Product product = repository.findById(productId).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ productId) );
+        return mapper.toProductDto(product);
+    }
 }

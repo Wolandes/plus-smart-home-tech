@@ -1,7 +1,10 @@
 package ru.yandex.practicum.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.yandex.practicum.model.Product;
+import ru.yandex.practicum.model.ProductCategory;
 
 import java.util.UUID;
 
@@ -10,6 +13,19 @@ import java.util.UUID;
  */
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     /**
+     * Получить страницу товаров по категории.
      *
+     * @param category категория товара
+     * @param pageable параметры пагинации
+     * @return страница с товарами данной категории
      */
+    Page<Product> findAllByProductCategory(ProductCategory category, Pageable pageable);
+
+    /**
+     * Получить Продукт по имени товара
+     *
+     * @param productName   имя товара
+     * @return Продукт товара
+     */
+    Product findByProductName(String productName);
 }

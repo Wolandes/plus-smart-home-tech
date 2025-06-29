@@ -1,47 +1,50 @@
 package ru.yandex.practicum.mapper;
 
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Product;
 import ru.yandex.practicum.model.ProductDto;
 
 /**
  * Mapper для продукта
  */
+@Component
 public class ProductMapper {
     /**
      * Перевод в Product
      *
-     * @Params: productDto сущность из interaction-api
-     * @Returns: Product сущность продукта
+     * @param productDto сущность из interaction-api
+     * @return сущность продукта
      */
-    public Product toProduct(ProductDto productDto){
-        return new Product(
-                productDto.getProductId(),
-                productDto.getProductName(),
-                productDto.getDescription(),
-                productDto.getImageSrc(),
-                productDto.getQuantityState(),
-                productDto.getProductState(),
-                productDto.getProductCategory(),
-                productDto.getPrice()
-        );
+    public Product toProduct(ProductDto productDto) {
+        return Product.builder()
+                .productId(productDto.getProductId())
+                .productName(productDto.getProductName())
+                .description(productDto.getDescription())
+                .imageSrc(productDto.getImageSrc())
+                .quantityState(productDto.getQuantityState())
+                .productState(productDto.getProductState())
+                .productCategory(productDto.getProductCategory())
+                .price(productDto.getPrice())
+                .build();
     }
 
     /**
      * Перевод в ProductDto
      *
-     * @Params: Сущность продукта - product
-     * @Returns: Сущность DTO продукта - productDto
+     * @param product сущность продукта
+     * @return  Сущность DTO продукта - productDto
      */
-    public ProductDto toProductDto(Product product){
-        return new ProductDto(
-                product.getProductId(),
-                product.getProductName(),
-                product.getDescription(),
-                product.getImageSrc(),
-                product.getQuantityState(),
-                product.getProductState(),
-                product.getProductCategory(),
-                product.getPrice()
-        );
+    public ProductDto toProductDto(Product product) {
+        return ProductDto.builder()
+                .productId(product.getProductId())
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .imageSrc(product.getImageSrc())
+                .quantityState(product.getQuantityState())
+                .productState(product.getProductState())
+                .productCategory(product.getProductCategory())
+                .price(product.getPrice())
+                .build();
+
     }
 }
