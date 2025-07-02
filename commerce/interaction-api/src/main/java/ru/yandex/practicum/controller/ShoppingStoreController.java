@@ -1,18 +1,35 @@
-package ru.yandex.practicum.service;
+package ru.yandex.practicum.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.ProductCategory;
 import ru.yandex.practicum.model.ProductDto;
-import ru.yandex.practicum.model.QuantityState;
 import ru.yandex.practicum.model.SetProductQuantityStateRequest;
 
 import java.util.UUID;
 
 /**
- * Контракт сервиса для сущности "Продукта".
+ * Контроллер Shopping Store
  */
-public interface ShoppingStoreService {
+@FeignClient(name = "shopping-store")
+public interface ShoppingStoreController {
+    /**
+     * Базовый путь (пустая строка)
+     */
+    String BASE_PATH = "";
+    /**
+     * Путь для изменения состояния товара
+     */
+    String REMOVE_PATH = "/removeProductFromStore";
+    /**
+     * Путь для изменения доступности товара
+     */
+    String QUANTITY_STATE_PATH = "/quantityState";
+
     /**
      * Получение списка товаров по типу в пагинированном виде
      *
@@ -21,7 +38,8 @@ public interface ShoppingStoreService {
      *
      * @return ProductDto - Список товаров в пагинацией
      */
-    Page<ProductDto> getProducts(ProductCategory category, Pageable pageable);
+    @GetMapping(BASE_PATH)
+    Page<ProductDto> getProducts(@RequestBody @NotNull ProductCategory category, Pageable pageable);
 
     /**
      * Создание нового товара в ассортименте
@@ -29,7 +47,8 @@ public interface ShoppingStoreService {
      * @param productDto - Добавляемый товар.
      * @return ProductDto - Созданный товар с id
      */
-    ProductDto createNewProduct(ProductDto productDto);
+    @PutMapping(BASE_PATH)
+    ProductDto createNewProduct(@RequestBody @Valid ProductDto productDto);
 
     /**
      * Обновление товара в ассортименте, например уточнение описания, характеристик и т.д.
@@ -37,7 +56,8 @@ public interface ShoppingStoreService {
      * @param productDto    обновляемый товар
      * @return  обновленный товар
      */
-    ProductDto updateProduct(ProductDto productDto);
+    @PostMapping(BASE_PATH)
+    ProductDto updateProduct(@RequestBody @Valid ProductDto productDto);
 
     /**
      * Удалить товар из ассортимента магазина. Функция для менеджерского состава.
@@ -45,7 +65,8 @@ public interface ShoppingStoreService {
      * @param uuid  id товара
      * @return void
      */
-    boolean removeProductFromStore(UUID uuid);
+    @PostMapping(REMOVE_PATH)
+    boolean removeProductFromStore(@PathVariable UUID uuid);
 
     /**
      * Запрос на изменение статуса товара в магазине, например: "Закончился", "Мало" и т.д.
@@ -53,6 +74,7 @@ public interface ShoppingStoreService {
      * @param setProductQuantityStateRequest запрос на изменение статуса остатка товара.
      * @return Изменение ProductDto
      */
+    @PostMapping(QUANTITY_STATE_PATH)
     ProductDto setProductQuantityState(SetProductQuantityStateRequest setProductQuantityStateRequest);
 
     /**
@@ -61,6 +83,6 @@ public interface ShoppingStoreService {
      * @param productId     id сущности БД
      * @return Сущность DTO ProductDto
      */
-    ProductDto getProduct(UUID productId);
-
+    @GetMapping("/{productId}")
+    ProductDto getProduct(@PathVariable UUID productId);
 }

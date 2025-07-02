@@ -89,15 +89,14 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     /**
      * Запрос на изменение статуса товара в магазине, например: "Закончился", "Мало" и т.д.
      *
-     * @param productId id "Продукта".
-     * @param quantityState Доступность товара
+     * @param setProductQuantityStateRequest запрос на изменение статуса остатка товара.
      * @return Изменение ProductDto
      */
     @Override
     @Transactional
-    public ProductDto setProductQuantityState(UUID productId, QuantityState quantityState){
-        Product product = repository.findById(productId).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ productId) );
-        product.setQuantityState(quantityState);
+    public ProductDto setProductQuantityState(SetProductQuantityStateRequest setProductQuantityStateRequest){
+        Product product = repository.findById(setProductQuantityStateRequest.getProductId()).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ setProductQuantityStateRequest.getProductId()) );
+        product.setQuantityState(setProductQuantityStateRequest.getQuantityState());
         repository.save(product);
         return mapper.toProductDto(product);
     }

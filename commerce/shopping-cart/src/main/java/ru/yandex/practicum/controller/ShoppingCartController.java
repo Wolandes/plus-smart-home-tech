@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/shopping-store")
+@RequestMapping("/api/v1/shopping-cart")
 @RequiredArgsConstructor
 @Validated
-public class ShoppingStoreController {
+public class ShoppingCartController {
 }
