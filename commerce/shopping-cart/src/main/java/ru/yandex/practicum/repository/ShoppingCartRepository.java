@@ -1,7 +1,9 @@
 package ru.yandex.practicum.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.model.ShoppingCart;
 
 import java.util.Optional;
@@ -25,7 +27,15 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, UUID
      *
      * @param userName имя пользователя
      */
+    @Transactional
+    @Modifying
     void deleteByUserName(String userName);
 
+    /**
+     * Наличие корзины у пользователя
+     *
+     * @param userName имя пользователя
+     * @return есть ли корзина у пользователя
+     */
     boolean existsByUserName(String userName);
 }

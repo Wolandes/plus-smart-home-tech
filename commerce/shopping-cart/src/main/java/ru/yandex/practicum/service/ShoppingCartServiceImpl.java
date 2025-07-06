@@ -3,7 +3,9 @@ package ru.yandex.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.error.NoProductsInShoppingCartException;
 import ru.yandex.practicum.error.NotAuthorizedUserException;
+import ru.yandex.practicum.error.NotFoundException;
 import ru.yandex.practicum.mapper.ShoppingCartMapper;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCart;
@@ -72,8 +74,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      *
      * @param userName имя пользователя
      */
-    public void deactivateCurrentShoppingCart(String userName){
-
+    public void deactivateCurrentShoppingCart(String userName) {
+        if (!repository.existsByUserName(userName)) {
+            throw new NotFoundException("Корзина не найдено по имени: " +  userName);
+        }
+        repository.deleteByUserName(userName);
     }
 
     /**
@@ -83,7 +88,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param products Список идентификаторов товаров, которые нужно удалить.
      * @return транферная сущность корзины пользователя
      */
-    ShoppingCartDto removeFromShoppingCart(String userName, List<UUID> products);
+    public ShoppingCartDto removeFromShoppingCart(String userName, List<UUID> products){
+        ShoppingCart cart = findByUserName(userName);
+        products.forEach(cart.getProducts()::remove);
+        return mapper.toShoppingCartDto(repository.save(cart));
+    }
 
     /**
      * Изменить количество товаров в корзине.
@@ -92,7 +101,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param changeProductQuantityRequest изменение количество товаров
      * @return транферная сущность корзины пользователя
      */
-    ShoppingCartDto changeProductQuantity(String userName, ChangeProductQuantityRequest changeProductQuantityRequest);
+    public ShoppingCartDto changeProductQuantity(String userName, ChangeProductQuantityRequest changeProductQuantityRequest){
+        ShoppingCart cart = findByUserName(userName);
+        if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())){
+            throw new NoProductsInShoppingCartException("Продукция на найдено в корзине");
+        }
+        cart.getProducts().compute(changeProductQuantityRequest.getProductId(),
+                (k,v) -> changeProductQuantityRequest.getQuantity());
+        return mapper.toShoppingCartDto(repository.save(cart));
+    }
 
     private ShoppingCart findByUserName(String userName) {
         return repository.findByUserName(userName).orElseThrow(() ->
@@ -100,7 +117,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     }
 
-    private ShoppingCart createNewShoppingCart(String userName){
+    private ShoppingCart createNewShoppingCart(String userName) {
         return new ShoppingCart().toBuilder()
                 .userName(userName)
                 .products(new HashMap<>())
