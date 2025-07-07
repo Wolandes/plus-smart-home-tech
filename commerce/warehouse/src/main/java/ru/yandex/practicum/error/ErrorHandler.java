@@ -13,12 +13,43 @@ import ru.yandex.practicum.error.model.ErrorResponse;
 public class ErrorHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final NotFoundException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleSpecifiedProductAlreadyInWarehouseException(
+            final SpecifiedProductAlreadyInWarehouseException e) {
         return new ErrorResponse(
                 e.getCause(),
                 e.getStackTrace(),
-                HttpStatus.NOT_FOUND,
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                e.getMessage(),
+                e.getSuppressed(),
+                e.getLocalizedMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNoSpecifiedProductInWarehouseException(
+            final NoSpecifiedProductInWarehouseException e) {
+        return new ErrorResponse(
+                e.getCause(),
+                e.getStackTrace(),
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                e.getMessage(),
+                e.getSuppressed(),
+                e.getLocalizedMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleProductInShoppingCartLowQuantityInWarehouse(
+            final ProductInShoppingCartLowQuantityInWarehouse e) {
+        return new ErrorResponse(
+                e.getCause(),
+                e.getStackTrace(),
+                HttpStatus.BAD_REQUEST,
                 e.getMessage(),
                 e.getMessage(),
                 e.getSuppressed(),

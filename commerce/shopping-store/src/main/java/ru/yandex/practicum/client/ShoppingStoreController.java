@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.client;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/shopping-store")
 @RequiredArgsConstructor
 @Validated
-public class ShoppingStoreControllerImpl implements ShoppingStoreController {
+public class ShoppingStoreController implements ShoppingStoreClient {
     private final ShoppingStoreService service;
 
     /**

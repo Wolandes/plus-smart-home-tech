@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.client;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Контроллер Shopping Store
  */
 @FeignClient(name = "shopping-cart")
-public interface ShoppingCartController {
+public interface ShoppingCartClient {
     /**
      * Параметр пользователя
      */

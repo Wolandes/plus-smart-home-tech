@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.client;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.util.UUID;
  * Контроллер Shopping Store
  */
 @FeignClient(name = "shopping-store")
-public interface ShoppingStoreController {
+public interface ShoppingStoreClient {
     /**
      * Базовый путь (пустая строка)
      */

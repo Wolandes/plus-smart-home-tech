@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.client;
 
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,7 +12,7 @@ import ru.yandex.practicum.model.*;
  * Трансферный клиент склада
  */
 @FeignClient(name = "warehouse")
-public interface WarehouseController {
+public interface WarehouseClient {
     /**
      * Путь проверки
      */

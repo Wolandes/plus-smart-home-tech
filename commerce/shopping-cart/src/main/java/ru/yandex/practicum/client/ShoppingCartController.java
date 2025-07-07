@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.yandex.practicum.client;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/shopping-cart")
 @RequiredArgsConstructor
 @Validated
-public class ShoppingCartController implements ShoppingCartService {
+public class ShoppingCartController implements ShoppingCartClient {
     /**
      * Сервис корзины продуктов
      */
