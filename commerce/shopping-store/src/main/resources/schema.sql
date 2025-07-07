@@ -17,8 +17,8 @@ COMMENT ON COLUMN products.product_name IS 'Имя продукта.';
 COMMENT ON COLUMN products.description IS 'Описание продукта.';
 COMMENT ON COLUMN products.image_src IS 'Ссылка на картинку во внешнем хранилище или SVG.';
 COMMENT ON COLUMN products.quantity_state IS 'Доступность товара';
-COMMENT ON COLLATION products.product_state IS 'Статус, перечисляющий состояние остатка как свойства товара.';
-COMMENT ON COLLATION products.product_category IS 'Состояние товара.';
-COMMENT ON COLLATION products.price IS 'Цена товара.';
+COMMENT ON COLUMN products.product_state IS 'Статус, перечисляющий состояние остатка как свойства товара.';
+COMMENT ON COLUMN products.product_category IS 'Состояние товара.';
+COMMENT ON COLUMN products.price IS 'Цена товара.';
 
 -- =====================================================================================================================

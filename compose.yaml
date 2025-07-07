@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: confluentinc/confluent-local:7.4.3
+    image: confluentinc/confluent-local
     hostname: kafka
     container_name: kafka
     ports:
@@ -18,7 +18,7 @@ services:
       CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
 
   kafka-init-topics:
-    image: confluentinc/confluent-local:7.4.3
+    image: confluentinc/confluent-local
     container_name: kafka-init-topics
     depends_on:
       - kafka
@@ -34,6 +34,14 @@ services:
                              --bootstrap-server kafka:29092'"
     init: true
 
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8082:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+
   db:
     image: postgres:16.1
     container_name: postgres-analyzer
@@ -41,7 +49,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=analyzer
       - POSTGRES_USER=analyzer
@@ -64,7 +72,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=commerce
       - POSTGRES_USER=commerce
-    #      - POSTGRES_DB=shopping_cart
+    #     - POSTGRES_DB=store
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
