@@ -106,8 +106,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())){
             throw new NoProductsInShoppingCartException("Продукция на найдено в корзине");
         }
-        cart.getProducts().compute(changeProductQuantityRequest.getProductId(),
-                (k,v) -> changeProductQuantityRequest.getQuantity());
+        cart.getProducts().put(changeProductQuantityRequest.getProductId(), changeProductQuantityRequest.getQuantity());
         return mapper.toShoppingCartDto(repository.save(cart));
     }
 
