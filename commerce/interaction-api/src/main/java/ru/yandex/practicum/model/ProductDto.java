@@ -58,6 +58,6 @@ public class ProductDto {
      * Цена товара
      */
     @NotNull(message = "Цена товара должен быть указан.")
-    @Length(min = 1, message = "Минимальная цена товара - 1")
+    @DecimalMin(value = "0.01", message = "Минимальная цена товара 0.01")
     Double price;
 }

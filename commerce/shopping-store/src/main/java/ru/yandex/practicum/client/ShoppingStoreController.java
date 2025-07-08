@@ -3,16 +3,14 @@ package ru.yandex.practicum.client;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.model.ProductCategory;
-import ru.yandex.practicum.model.ProductDto;
-import ru.yandex.practicum.model.SetProductQuantityStateRequest;
+import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.service.ShoppingStoreService;
 
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Контроллер хранилище Shopping Store
@@ -21,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/shopping-store")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class ShoppingStoreController implements ShoppingStoreClient {
     private final ShoppingStoreService service;
 
@@ -33,7 +32,7 @@ public class ShoppingStoreController implements ShoppingStoreClient {
      * @return ProductDto - Список товаров в пагинацией
      */
     @GetMapping
-    public Page<ProductDto> getProducts(@RequestBody @NotNull ProductCategory category, Pageable pageable) {
+    public ProductsDto getProducts(ProductCategory category, Pageable pageable) {
         return service.getProducts(category,pageable);
     }
 
@@ -45,6 +44,7 @@ public class ShoppingStoreController implements ShoppingStoreClient {
      */
     @PutMapping
     public ProductDto createNewProduct(@RequestBody @Valid ProductDto productDto){
+        log.info("Пошел добавление нового продукта");
         return service.createNewProduct(productDto);
     }
 
@@ -65,8 +65,9 @@ public class ShoppingStoreController implements ShoppingStoreClient {
      * @param uuid  id товара
      * @return void
      */
-    @PostMapping("/removeProductFromStore")
-    public boolean removeProductFromStore(@PathVariable UUID uuid){
+    @Override
+    public boolean removeProductFromStore(UUID uuid){
+        log.info("Пошел процесс удаления товара с id: " + uuid);
         return service.removeProductFromStore(uuid);
     }
 

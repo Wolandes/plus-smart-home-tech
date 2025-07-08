@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SortInfo {
-    private String property;
-    private String direction;
+public class ProductsDto {
+    List<ProductDto> content;
+    List<SortInfo> sort;
 }

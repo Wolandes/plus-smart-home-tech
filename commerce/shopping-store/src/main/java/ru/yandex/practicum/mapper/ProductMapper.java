@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Product;
 import ru.yandex.practicum.model.ProductDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Mapper для продукта
  */
@@ -46,5 +49,20 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .build();
 
+    }
+
+    /**
+     * Перевод в List<ProductsDto>
+     *
+     * @param productList список сущности продукта
+     * @return возвращает трансферный список
+     */
+    public List<ProductDto> toListProductDto(List<Product> productList){
+        List<ProductDto> productDtos = new ArrayList<>();
+        for (Product product : productList) {
+            ProductDto productDto = toProductDto(product);
+            productDtos.add(productDto);
+        }
+        return productDtos;
     }
 }

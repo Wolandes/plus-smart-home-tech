@@ -1,7 +1,8 @@
 package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.error.NotFoundException;
@@ -9,10 +10,10 @@ import ru.yandex.practicum.mapper.ProductMapper;
 import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.repository.ProductRepository;
 
-import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для сущности "Продукт".
@@ -38,9 +39,18 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
      * @return ProductDto - Список товаров в пагинацией
      */
     @Override
-    public Page<ProductDto> getProducts(ProductCategory category, Pageable pageable) {
-        return repository.findAllByProductCategory(category, pageable)
-                .map(mapper::toProductDto);
+    public ProductsDto getProducts(ProductCategory category, Pageable pageable) {
+        PageRequest pageRequest = pageable.toPageRequest();
+        List<Product> products = repository.findAllByProductCategory(category, pageRequest);
+        List<ProductDto> productDtos = mapper.toListProductDto(products);
+        ProductsDto productsDto = new ProductsDto();
+        productsDto.setContent(productDtos);
+        List<SortInfo> sortInfoList = pageRequest.getSort().stream()
+                .map(order -> new SortInfo(order.getProperty(), order.getDirection().name()))
+                .collect(Collectors.toList());
+        productsDto.setSort(sortInfoList);
+
+        return productsDto;
     }
 
     /**

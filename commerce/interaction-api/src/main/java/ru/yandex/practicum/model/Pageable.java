@@ -3,10 +3,8 @@ package ru.yandex.practicum.model;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -19,10 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pageable {
-    @Min(value = 0, message = "Минимальная страница не может быть меньше 0")
+    @Min(value = 0, message = "Номер страницы должен быть положительным")
     private int page;
 
-    @Positive(message = "Размер страницы не может быть больше 100")
+    @Positive(message = "размер страницы должен быть положительным")
     private int size = 100;
 
     @NotNull

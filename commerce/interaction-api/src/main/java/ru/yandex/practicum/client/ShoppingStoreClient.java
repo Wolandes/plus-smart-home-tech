@@ -3,14 +3,11 @@ package ru.yandex.practicum.client;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.model.ProductCategory;
-import ru.yandex.practicum.model.ProductDto;
-import ru.yandex.practicum.model.SetProductQuantityStateRequest;
+import ru.yandex.practicum.model.*;
 
 import java.util.UUID;
+import java.util.List;
 
 /**
  * Контроллер Shopping Store
@@ -39,7 +36,7 @@ public interface ShoppingStoreClient {
      * @return ProductDto - Список товаров в пагинацией
      */
     @GetMapping(BASE_PATH)
-    Page<ProductDto> getProducts(@RequestBody @NotNull ProductCategory category, Pageable pageable);
+    ProductsDto getProducts(ProductCategory category, Pageable pageable);
 
     /**
      * Создание нового товара в ассортименте
@@ -66,7 +63,7 @@ public interface ShoppingStoreClient {
      * @return void
      */
     @PostMapping(REMOVE_PATH)
-    boolean removeProductFromStore(@PathVariable UUID uuid);
+    boolean removeProductFromStore(@RequestBody UUID uuid);
 
     /**
      * Запрос на изменение статуса товара в магазине, например: "Закончился", "Мало" и т.д.
