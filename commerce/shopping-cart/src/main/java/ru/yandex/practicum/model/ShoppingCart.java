@@ -28,7 +28,7 @@ public class ShoppingCart {
     /**
      * Имя пользователя
      */
-    @Column(name = "user_name", nullable = false)
+    @Column(name = "user_name", nullable = false, length = 255)
     private String userName;
 
     /**

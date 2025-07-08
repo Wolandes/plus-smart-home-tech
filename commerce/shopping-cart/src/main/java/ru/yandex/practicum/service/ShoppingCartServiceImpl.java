@@ -107,7 +107,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart cart = findByUserName(userName);
 
         if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())) {
-            throw new NoProductsInShoppingCartException("Продукт не найдено в корзине");
+            throw new NoProductsInShoppingCartException("Продукт не найден в корзине");
         }
 
         cart.getProducts().compute(changeProductQuantityRequest.getProductId(),
