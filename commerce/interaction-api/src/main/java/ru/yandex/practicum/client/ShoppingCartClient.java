@@ -76,7 +76,7 @@ public interface ShoppingCartClient {
      * @param products Список идентификаторов товаров, которые нужно удалить.
      * @return транферная сущность корзины пользователя
      */
-    @PutMapping(REMOVE_PATH)
+    @PostMapping(REMOVE_PATH)
     ShoppingCartDto removeFromShoppingCart(@RequestParam(USERNAME_PARAM) @NotBlank(message = VALIDATION_MESSAGE) String userName,
                                            @RequestBody List<UUID> products);
 
@@ -87,7 +87,7 @@ public interface ShoppingCartClient {
      * @param changeProductQuantityRequest изменение количество товаров
      * @return транферная сущность корзины пользователя
      */
-    @PutMapping(CHANGE_QUANTITY_PATH)
+    @PostMapping(CHANGE_QUANTITY_PATH)
     ShoppingCartDto changeProductQuantity(@RequestParam(USERNAME_PARAM) @NotBlank(message = VALIDATION_MESSAGE) String userName,
                                           @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
 

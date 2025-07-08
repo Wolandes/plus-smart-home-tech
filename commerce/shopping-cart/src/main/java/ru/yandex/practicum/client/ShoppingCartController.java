@@ -65,7 +65,7 @@ public class ShoppingCartController implements ShoppingCartClient {
      * @param products Список идентификаторов товаров, которые нужно удалить.
      * @return транферная сущность корзины пользователя
      */
-    @PutMapping("/remove")
+    @PostMapping("/remove")
     public ShoppingCartDto removeFromShoppingCart(@NotBlank(message = ValidationUtil.VALIDATION_USERNAME_MESSAGE) String userName,
                                                   @RequestBody List<UUID> products) {
         return service.removeFromShoppingCart(userName, products);
@@ -78,7 +78,7 @@ public class ShoppingCartController implements ShoppingCartClient {
      * @param changeProductQuantityRequest изменение количество товаров
      * @return транферная сущность корзины пользователя
      */
-    @PutMapping("/change-quantity")
+    @PostMapping("/change-quantity")
     public ShoppingCartDto changeProductQuantity(@NotBlank(message = ValidationUtil.VALIDATION_USERNAME_MESSAGE) String userName,
                                                  @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest) {
         return service.changeProductQuantity(userName, changeProductQuantityRequest);
