@@ -105,15 +105,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional
     public ShoppingCartDto changeProductQuantity(String userName, ChangeProductQuantityRequest changeProductQuantityRequest){
         ShoppingCart cart = findByUserName(userName);
+        UUID productId = changeProductQuantityRequest.getProductId();
+        Long newQuantity = changeProductQuantityRequest.getQuantity();
 
-        if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())) {
-            throw new NoProductsInShoppingCartException("Продукт не найден в корзине");
+        Map<UUID, Long> products = cart.getProducts();
+
+        if (!products.containsKey(productId)) {
+            throw new NoProductsInShoppingCartException("Продукт не найден в корзине: " + productId);
         }
 
-        cart.getProducts().compute(changeProductQuantityRequest.getProductId(),
-                (k, v) -> changeProductQuantityRequest.getQuantity());
+        Long currentQuantity = products.get(productId);
+        if (!Objects.equals(currentQuantity, newQuantity)) {
+            return mapper.toShoppingCartDto(cart);
+        }
 
-        return mapper.toShoppingCartDto(repository.save(cart));
+        ShoppingCart savedCart = repository.save(cart);
+        return mapper.toShoppingCartDto(savedCart);
     }
 
     private ShoppingCart findByUserName(String userName) {
