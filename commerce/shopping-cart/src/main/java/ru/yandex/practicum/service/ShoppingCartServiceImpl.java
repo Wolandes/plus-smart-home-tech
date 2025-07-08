@@ -101,12 +101,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param changeProductQuantityRequest изменение количество товаров
      * @return транферная сущность корзины пользователя
      */
+    @Override
+    @Transactional
     public ShoppingCartDto changeProductQuantity(String userName, ChangeProductQuantityRequest changeProductQuantityRequest){
         ShoppingCart cart = findByUserName(userName);
-        if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())){
-            throw new NoProductsInShoppingCartException("Продукция на найдено в корзине");
+
+        if (!cart.getProducts().containsKey(changeProductQuantityRequest.getProductId())) {
+            throw new NoProductsInShoppingCartException("Продукт не найдено в корзине");
         }
-        cart.getProducts().put(changeProductQuantityRequest.getProductId(), changeProductQuantityRequest.getQuantity());
+
+        cart.getProducts().compute(changeProductQuantityRequest.getProductId(),
+                (k, v) -> changeProductQuantityRequest.getQuantity());
+
         return mapper.toShoppingCartDto(repository.save(cart));
     }
 
