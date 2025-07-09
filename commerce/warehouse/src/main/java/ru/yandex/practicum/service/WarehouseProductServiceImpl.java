@@ -1,0 +1,112 @@
+package ru.yandex.practicum.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.error.NoSpecifiedProductInWarehouseException;
+import ru.yandex.practicum.error.ProductInShoppingCartLowQuantityInWarehouse;
+import ru.yandex.practicum.error.SpecifiedProductAlreadyInWarehouseException;
+import ru.yandex.practicum.mapper.WarehouseProductMapper;
+import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.repository.WarehouseProductRepository;
+import ru.yandex.practicum.util.AddressUtil;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class WarehouseProductServiceImpl implements WarehouseProductService {
+    private final WarehouseProductRepository repository;
+    private final WarehouseProductMapper mapper;
+
+    /**
+     * Описание нового товара для обработки складом.
+     *
+     * @param request запрос на добавления товара
+     */
+    @Override
+    @Transactional
+    public void newProductInWarehouse(NewProductInWarehouseRequest request) {
+        if (repository.existsById(request.getProductId())) {
+            throw new SpecifiedProductAlreadyInWarehouseException(
+                    "Товар с таким описанием зарегистрирован на складе"
+            );
+        }
+        WarehouseProduct product = mapper.toWarehouseProduct(request);
+        repository.save(product);
+    }
+
+    /**
+     * Предварительно проверить что количество товаров на складе достаточно для данной корзиный продуктов.
+     *
+     * @param shoppingCartDto трансферная сущность корзины пользователя
+     * @return Трансферные зарезервированный продукты
+     */
+    @Override
+    @Transactional
+    public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto shoppingCartDto) {
+        Map<UUID, Long> cartProducts = shoppingCartDto.getProducts();
+        Map<UUID, WarehouseProduct> products = repository.findAllById(cartProducts.keySet())
+                .stream()
+                .collect(Collectors.toMap(WarehouseProduct::getProductId, Function.identity()));
+        if (products.size() != cartProducts.size()) {
+            throw new ProductInShoppingCartLowQuantityInWarehouse("Некоторых товаров нет на складе");
+        }
+        double weight = 0;
+        double volume = 0;
+        boolean fragile = false;
+        for (Map.Entry<UUID, Long> cartProduct : cartProducts.entrySet()) {
+            WarehouseProduct product = products.get(cartProduct.getKey());
+            if (cartProduct.getValue() > product.getQuantity()) {
+                throw new ProductInShoppingCartLowQuantityInWarehouse(
+                        "Ошибка, товар из корзины не находится в требуемом количестве на складе");
+            }
+            weight += product.getWeight() * cartProduct.getValue();
+            volume += product.getHeight() * product.getWeight() * product.getDepth() * cartProduct.getValue();
+            fragile = fragile || product.isFragile();
+        }
+        return new BookedProductsDto(
+                weight,
+                volume,
+                fragile
+        );
+    }
+
+    /**
+     * Принять товар на склад.
+     *
+     * @param request запрос на добавления количества товара
+     */
+    public void AddProductToWarehouseRequest(AddProductToWarehouseRequest request) {
+        WarehouseProduct product = getWarehouseProduct(request.getProductId());
+        long newQuantity = product.getQuantity() + request.getQuantity();
+        product.setQuantity(newQuantity);
+        repository.save(product);
+    }
+
+    /**
+     * Предоставить адрес склада для расчёта доставки.
+     *
+     * @return трансферная сущность адресса товара
+     */
+    public AddressDto getWarehouseAddress() {
+        String defValue = AddressUtil.getAddress();
+        return new AddressDto(
+                defValue,
+                defValue,
+                defValue,
+                defValue,
+                defValue
+        );
+
+    }
+
+    private WarehouseProduct getWarehouseProduct(UUID productId) {
+        return repository.findById(productId).orElseThrow(
+                () -> new NoSpecifiedProductInWarehouseException("Нет информации о товаре на складе")
+        );
+    }
+}
