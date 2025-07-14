@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 8080
 spring:
   application:
     name: config-server
@@ -12,6 +12,7 @@ spring:
           searchLocations:
             - classpath:config/telemetry/{application}
             - classpath:config/commerce/{application}
+            - classpath:config/infra/{application}
 eureka:
   client:
     serviceUrl:
