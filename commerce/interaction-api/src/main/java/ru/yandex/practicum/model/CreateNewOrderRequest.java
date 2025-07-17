@@ -1,10 +1,14 @@
 package ru.yandex.practicum.model;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Создание заказа
  */
+@Data
+@NoArgsConstructor
 public class CreateNewOrderRequest {
     /**
      * Корзина

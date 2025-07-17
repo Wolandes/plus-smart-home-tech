@@ -1,63 +1,73 @@
 package ru.yandex.practicum.model;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Представление заказа в системе.
- */
-@Data
+@Entity
+@Table(name = "orders")
+@Getter
+@Setter
+@Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
-public class OrderDto {
+public class Order {
     /**
      * Уникальный идентификатор заказа
      */
-    @NotNull
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "order_id")
     UUID orderId;
 
     /**
      * Уникальный идентификатор корзины
      */
+    @Column(name = "cart_id")
     UUID shoppingCartId;
 
     /**
      * Коллекция продуктов
      */
-    @NotEmpty
+    @ElementCollection
+    @CollectionTable(name="order_products", joinColumns = @JoinColumn(name = "order_id"))
+    @MapKeyColumn(name = "product_id")
+    @Column(name = "quantity")
     Map<UUID, Integer> products;
 
     /**
      * Идентификатор оплаты.
      */
+    @Column(name = "payment_id")
     UUID paymentId;
 
     /**
      * Идентификатор доставки.
      */
+    @Column(name = "delivery_id")
     UUID deliveryId;
 
     /**
      * Статус заказа.
      */
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "state")
     OrderStatus state;
 
     /**
      * Общий вес доставки.
      */
+    @Column(name = "delivery_weight")
     Double deliveryWeight;
 
     /**
      * Общий объём доставки.
      */
+    @Column(name = "delivery_volume")
     Double deliveryVolume;
 
     /**
@@ -68,15 +78,18 @@ public class OrderDto {
     /**
      * Общая стоимость.
      */
+    @Column(name = "total_price")
     Double totalPrice;
 
     /**
      * Стоимость доставки.
      */
+    @Column(name = "delivery_price")
     Double deliveryPrice;
 
     /**
      * Стоимость товаров в заказе.
      */
+    @Column(name = "product_price")
     Double productPrice;
 }
