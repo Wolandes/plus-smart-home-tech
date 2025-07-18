@@ -25,6 +25,12 @@ public class Order {
     UUID orderId;
 
     /**
+     * Имя пользователя
+     */
+    @Column(name = "user_name")
+    String userName;
+
+    /**
      * Уникальный идентификатор корзины
      */
     @Column(name = "cart_id")
