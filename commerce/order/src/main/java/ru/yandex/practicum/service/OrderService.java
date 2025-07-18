@@ -33,12 +33,36 @@ public interface OrderService {
     OrderDto productReturn(ProductReturnRequest productReturnRequest);
 
     /**
+     * Оплата заказа
+     *
+     * @param id уникальный идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    OrderDto payment(UUID id);
+
+    /**
      * Оплата заказа произошла с ошибкой.
      *
      * @param id Идентификатор заказа.
      * @return Заказ пользователя после ошибки оплаты
      */
     OrderDto paymentFailed(UUID id);
+
+    /**
+     * Заказ пользователя после доставки
+     *
+     * @param id Идентификатор заказа.
+     * @return Заказ пользователя после доставки
+     */
+    OrderDto delivery(UUID id);
+
+    /**
+     * Доставка заказа произошла с ошибкой.
+     *
+     * @param id Идентификатор заказа.
+     * @return Заказ пользователя после ошибки доставки
+     */
+    OrderDto deliveryFailed(UUID id);
 
     /**
      * Завершение заказа.

@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Order;
 import ru.yandex.practicum.model.OrderDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Маппер заказа
  */
@@ -54,5 +57,20 @@ public class OrderMapper {
                 .deliveryPrice(orderDto.getDeliveryPrice())
                 .productPrice(orderDto.getProductPrice())
                 .build();
+    }
+
+    /**
+     * Перевод в OrderListDto
+     *
+     * @param orderList Колллекция сущности заказа
+     * @return траснферную колллекцию сущности заказа
+     */
+    public List<OrderDto> orderDtoList(List<Order> orderList){
+        List<OrderDto> orderDtoList = new ArrayList<>();
+        for (Order order : orderList) {
+            OrderDto orderDto = toOrderDto(order);
+            orderDtoList.add(orderDto);
+        }
+        return orderDtoList;
     }
 }

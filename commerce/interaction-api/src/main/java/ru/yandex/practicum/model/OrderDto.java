@@ -21,7 +21,6 @@ public class OrderDto {
     /**
      * Уникальный идентификатор заказа
      */
-    @NotNull
     UUID orderId;
 
     /**

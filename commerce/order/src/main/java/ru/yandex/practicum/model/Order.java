@@ -7,6 +7,9 @@ import lombok.experimental.FieldDefaults;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Сущность заказа
+ */
 @Entity
 @Table(name = "orders")
 @Getter

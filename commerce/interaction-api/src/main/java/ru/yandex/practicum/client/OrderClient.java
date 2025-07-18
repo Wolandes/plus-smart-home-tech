@@ -1,25 +1,33 @@
 package ru.yandex.practicum.client;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.CreateNewOrderRequest;
 import ru.yandex.practicum.model.OrderDto;
 import ru.yandex.practicum.model.ProductReturnRequest;
+import ru.yandex.practicum.util.ValidationUtil;
 
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "order")
+@Validated
+@FeignClient(name = "order", path = "/api/v1/order")
 public interface OrderClient {
     /**
      * Получить список заказов
      *
-     * @param username Имя пользователя
+     * @param userName Имя пользователя
      * @return список заказов
      */
-    @GetMapping("/api/v1/order")
-    List<OrderDto> getOrdersUser(@RequestParam String username);
+    @GetMapping
+    List<OrderDto> getClientOrders(
+            @RequestParam(name = "username")
+            @NotBlank(message = ValidationUtil.VALIDATION_USERNAME_MESSAGE)
+            String userName);
 
     /**
      * Создание нового заказа
@@ -27,8 +35,8 @@ public interface OrderClient {
      * @param request сущность нового заказа
      * @return трансферная сущность заказа
      */
-    @PutMapping("/api/v1/order")
-    OrderDto createOrder(@Valid @RequestBody CreateNewOrderRequest request);
+    @PutMapping
+    OrderDto createNewOrder(@RequestBody @Valid CreateNewOrderRequest request);
 
     /**
      * Возврат заказа
@@ -36,8 +44,8 @@ public interface OrderClient {
      * @param request запрос возврата заказа
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/return")
-    OrderDto returnOrder(@RequestBody @Valid ProductReturnRequest request);
+    @PostMapping("/return")
+    OrderDto productReturn(@RequestBody @Valid ProductReturnRequest request);
 
     /**
      * Оплата заказа
@@ -45,8 +53,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/payment")
-    OrderDto paymentOrder(@RequestBody UUID orderId);
+    @PostMapping("/payment")
+    OrderDto payment(@RequestBody @NotNull UUID orderId);
 
     /**
      * Оплата заказа произошла с ошибкой.
@@ -54,8 +62,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/failed")
-    OrderDto failedPaymentOrder(@RequestBody UUID orderId);
+    @PostMapping("/payment/failed")
+    OrderDto paymentFailed(@RequestBody @NotNull UUID orderId);
 
     /**
      * Доставка заказа.
@@ -63,8 +71,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/delivery")
-    OrderDto deliveryOrder(@RequestBody UUID orderId);
+    @PostMapping("/delivery")
+    OrderDto delivery(@RequestBody @NotNull UUID orderId);
 
     /**
      * Доставка заказа произошла с ошибкой.
@@ -72,8 +80,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/delivery/failed")
-    OrderDto deliveryOrderFailed(@RequestBody UUID orderId);
+    @PostMapping("/delivery/failed")
+    OrderDto deliveryFailed(@RequestBody @NotNull UUID orderId);
 
     /**
      * Завершение заказа.
@@ -81,8 +89,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/completed")
-    OrderDto completeOrder(@RequestBody UUID orderId);
+    @PostMapping("/completed")
+    OrderDto complete(@RequestBody @NotNull UUID orderId);
 
     /**
      * Расчёт стоимости заказа.
@@ -90,8 +98,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/calculate/total")
-    OrderDto calculateTotalCost(@RequestBody UUID orderId);
+    @PostMapping("/calculate/total")
+    OrderDto calculateTotalCost(@RequestBody @NotNull UUID orderId);
 
     /**
      * Расчёт стоимости доставки заказа.
@@ -99,8 +107,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/calculate/delivery")
-    OrderDto calculateDeliveryCost(@RequestBody UUID orderId);
+    @PostMapping("/calculate/delivery")
+    OrderDto calculateDeliveryCost(@RequestBody @NotNull UUID orderId);
 
     /**
      * Сборка заказа.
@@ -108,8 +116,8 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/assembly")
-    OrderDto assembly(@RequestBody UUID orderId);
+    @PostMapping("/assembly")
+    OrderDto assembly(@RequestBody @NotNull UUID orderId);
 
     /**
      * Сборка заказа произошла с ошибкой.
@@ -117,6 +125,6 @@ public interface OrderClient {
      * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    @PostMapping("/api/v1/order/assembly/failed")
-    OrderDto assemblyFailed(@RequestBody UUID orderId);
+    @PostMapping("/assembly/failed")
+    OrderDto assemblyFailed(@RequestBody @NotNull UUID orderId);
 }
