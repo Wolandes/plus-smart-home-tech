@@ -1,24 +1,12 @@
-package ru.yandex.practicum.client;
+package ru.yandex.practicum.service;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.model.DeliveryDto;
 import ru.yandex.practicum.model.OrderDto;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * Feign Контроллер доставки
- */
-@Validated
-@FeignClient(name = "delivery", path = "/api/v1/delivery")
-public interface DeliveryClient {
+public interface DeliveryService {
 
     /**
      * Создать новую доставку в БД.
@@ -26,32 +14,28 @@ public interface DeliveryClient {
      * @param deliveryDto Доставка для сохранения.
      * @return Указанная заявка с присвоенным идентификатором
      */
-    @PutMapping
-    DeliveryDto createDelivery(@RequestBody @Valid DeliveryDto deliveryDto);
+    DeliveryDto createDelivery(DeliveryDto deliveryDto);
 
     /**
      * Эмуляция успешной доставки товара.
      *
      * @param orderId Идентификатор заказа.
      */
-    @PostMapping("/successful")
-    void completeDelivery(@RequestBody @NotNull UUID orderId);
+    void completeDelivery(UUID orderId);
 
     /**
      * Эмуляция получения товара в доставку.
      *
      * @param orderId Идентификатор заказа.
      */
-    @PostMapping("/picked")
-    void confirmPickup(@RequestBody @NotNull UUID orderId);
+    void confirmPickup(UUID orderId);
 
     /**
      * Эмуляция неудачного вручения товара.
      *
      * @param orderId Идентификатор заказа.
      */
-    @PostMapping("/failed")
-    void failDelivery(@RequestBody @NotNull UUID orderId);
+    void failDelivery(UUID orderId);
 
     /**
      * Расчёт полной стоимости доставки заказа.
@@ -59,6 +43,5 @@ public interface DeliveryClient {
      * @param orderDto Заказ для расчёта.
      * @return Полная стоимость доставки заказа
      */
-    @PostMapping("/cost")
-    BigDecimal calculateDeliveryCost(@RequestBody @Valid OrderDto orderDto);
+    BigDecimal calculateDeliveryCost(OrderDto orderDto);
 }
