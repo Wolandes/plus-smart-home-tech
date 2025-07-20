@@ -11,6 +11,7 @@ import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.repository.ProductRepository;
 
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -122,5 +123,13 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     public ProductDto getProduct(UUID productId){
         Product product = repository.findById(productId).orElseThrow(() -> new NotFoundException("Нет найден продукт с id: "+ productId) );
         return mapper.toProductDto(product);
+    }
+
+    @Override
+    public List<ProductDto> getProductByIds(Collection<UUID> ids) {
+        return repository.findAllById(ids)
+                .stream()
+                .map(mapper::toProductDto)
+                .toList();
     }
 }

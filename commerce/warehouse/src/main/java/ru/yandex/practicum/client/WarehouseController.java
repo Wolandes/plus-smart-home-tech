@@ -54,4 +54,10 @@ public class WarehouseController implements WarehouseClient {
     public AddressDto getWarehouseAddress(){
         return service.getWarehouseAddress();
     }
+
+    @Override
+    @PostMapping("/shipped")
+    public void shippedToDelivery(@RequestBody @Valid DeliveryRequest request) {
+        service.shippedToDelivery(request);
+    }
 }

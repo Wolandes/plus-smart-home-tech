@@ -60,4 +60,12 @@ public interface WarehouseClient {
      */
     @GetMapping(ADDRESS_ENDPOINT)
     AddressDto getWarehouseAddress();
+
+    /**
+     * Отправленный заказ
+     *
+     * @param request запрос на доставку
+     */
+    @PostMapping("/shipped")
+    void shippedToDelivery(@RequestBody @Valid DeliveryRequest request);
 }

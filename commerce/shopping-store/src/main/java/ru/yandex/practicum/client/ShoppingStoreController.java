@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.service.ShoppingStoreService;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.List;
 
@@ -91,6 +92,11 @@ public class ShoppingStoreController implements ShoppingStoreClient {
     @GetMapping("/{productId}")
     public ProductDto getProduct(@PathVariable UUID productId){
         return service.getProduct(productId);
+    }
+
+    @GetMapping
+    public List<ProductDto> getProductByIds(Collection<UUID> ids){
+        return service.getProductByIds(ids);
     }
 
 }

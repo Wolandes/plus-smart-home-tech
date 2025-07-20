@@ -67,15 +67,15 @@ public class OrderDto {
     /**
      * Общая стоимость.
      */
-    Double totalPrice;
+    BigDecimal totalPrice;
 
     /**
      * Стоимость доставки.
      */
-    Double deliveryPrice;
+    BigDecimal deliveryPrice;
 
     /**
      * Стоимость товаров в заказе.
      */
-    Double productPrice;
+    BigDecimal productPrice;
 }

@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.*;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.List;
 
@@ -82,4 +83,12 @@ public interface ShoppingStoreClient {
      */
     @GetMapping("/{productId}")
     ProductDto getProduct(@PathVariable UUID productId);
+
+    /**
+     * Получить коллекцию продуктов
+     *
+     * @param ids id продуктов
+     * @return продукты
+     */
+    public List<ProductDto> getProductByIds(Collection<UUID> ids);
 }

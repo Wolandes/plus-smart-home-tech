@@ -34,4 +34,11 @@ public interface WarehouseProductService {
      * @return трансферная сущность адресса товара
      */
     AddressDto getWarehouseAddress();
+
+    /**
+     * Запрос на доставку
+     *
+     * @param request запрос на доставку
+     */
+    void shippedToDelivery(DeliveryRequest request);
 }

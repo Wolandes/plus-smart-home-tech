@@ -1,5 +1,6 @@
 package ru.yandex.practicum.service;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import ru.yandex.practicum.error.ProductInShoppingCartLowQuantityInWarehouse;
 import ru.yandex.practicum.error.SpecifiedProductAlreadyInWarehouseException;
 import ru.yandex.practicum.mapper.WarehouseProductMapper;
 import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.repository.WarehouseProductRepository;
 import ru.yandex.practicum.util.AddressUtil;
 
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class WarehouseProductServiceImpl implements WarehouseProductService {
     private final WarehouseProductRepository repository;
     private final WarehouseProductMapper mapper;
+    private final BookingRepository bookingRepository;
 
     /**
      * Описание нового товара для обработки складом.
@@ -104,9 +107,23 @@ public class WarehouseProductServiceImpl implements WarehouseProductService {
 
     }
 
+    @Override
+    @Transactional
+    public void shippedToDelivery(DeliveryRequest request) {
+        Booking booking = getBookingById(request.getOrderId());
+        booking.setDeliveryId(request.getDeliveryId());
+        bookingRepository.save(booking);
+    }
+
     private WarehouseProduct getWarehouseProduct(UUID productId) {
         return repository.findById(productId).orElseThrow(
                 () -> new NoSpecifiedProductInWarehouseException("Нет информации о товаре на складе")
+        );
+    }
+
+    private Booking getBookingById(UUID orderId) {
+        return bookingRepository.findById(orderId).orElseThrow(
+                () -> new NotFoundException("Нет информации о бронировании товаров по заказу")
         );
     }
 }

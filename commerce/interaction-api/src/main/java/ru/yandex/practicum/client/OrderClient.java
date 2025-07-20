@@ -72,7 +72,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/delivery")
-    OrderDto delivery(@RequestBody @NotNull UUID orderId);
+    OrderDto deliverOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Доставка заказа произошла с ошибкой.
@@ -81,7 +81,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/delivery/failed")
-    OrderDto deliveryFailed(@RequestBody @NotNull UUID orderId);
+    OrderDto failDeliverOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Завершение заказа.
@@ -127,4 +127,22 @@ public interface OrderClient {
      */
     @PostMapping("/assembly/failed")
     OrderDto assemblyFailed(@RequestBody @NotNull UUID orderId);
+
+    /**
+     * Успешный платежный ордер
+     *
+     * @param orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    @PostMapping("/payment/success")
+    OrderDto successPayOrder(@RequestBody @NotNull UUID orderId);
+
+    /**
+     * Ошибка при заказе
+     *
+     * @param orderId orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    @PostMapping("/payment/failed")
+    OrderDto failPayOrder(@RequestBody @NotNull UUID orderId);
 }

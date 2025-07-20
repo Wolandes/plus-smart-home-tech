@@ -1,4 +1,10 @@
 package ru.yandex.practicum.client;
 
-public class DeliveryController {
+import ru.yandex.practicum.service.DeliveryService;
+
+/**
+ * Реализация контроллера доставки
+ */
+public class DeliveryController implements DeliveryClient {
+
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class Order {
      * Уникальный идентификатор корзины
      */
     @Column(name = "cart_id")
-    UUID shoppingCartId;
+    UUID cartId;
 
     /**
      * Коллекция продуктов
@@ -46,7 +47,7 @@ public class Order {
     @CollectionTable(name="order_products", joinColumns = @JoinColumn(name = "order_id"))
     @MapKeyColumn(name = "product_id")
     @Column(name = "quantity")
-    Map<UUID, Integer> products;
+    Map<UUID, Long> products;
 
     /**
      * Идентификатор оплаты.
@@ -88,17 +89,16 @@ public class Order {
      * Общая стоимость.
      */
     @Column(name = "total_price")
-    Double totalPrice;
+    BigDecimal totalPrice;
 
     /**
      * Стоимость доставки.
      */
     @Column(name = "delivery_price")
-    Double deliveryPrice;
-
+    BigDecimal deliveryPrice;
     /**
      * Стоимость товаров в заказе.
      */
     @Column(name = "product_price")
-    Double productPrice;
+    BigDecimal productPrice;
 }
