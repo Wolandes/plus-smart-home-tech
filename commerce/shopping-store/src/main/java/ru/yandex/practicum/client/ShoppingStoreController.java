@@ -94,7 +94,7 @@ public class ShoppingStoreController implements ShoppingStoreClient {
         return service.getProduct(productId);
     }
 
-    @GetMapping
+    @GetMapping("/onlyIds")
     public List<ProductDto> getProductByIds(Collection<UUID> ids){
         return service.getProductByIds(ids);
     }

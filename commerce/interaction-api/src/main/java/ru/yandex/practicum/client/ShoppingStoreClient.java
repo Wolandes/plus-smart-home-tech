@@ -90,5 +90,6 @@ public interface ShoppingStoreClient {
      * @param ids id продуктов
      * @return продукты
      */
+    @GetMapping("/onlyIds")
     public List<ProductDto> getProductByIds(Collection<UUID> ids);
 }
