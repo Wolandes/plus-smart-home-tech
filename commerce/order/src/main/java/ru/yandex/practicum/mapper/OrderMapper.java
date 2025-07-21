@@ -18,12 +18,17 @@ public class OrderMapper {
      * @param order сущность заказа
      * @return трансферная сущность заказа
      */
-    public OrderDto toOrderDto(Order order){
+    public OrderDto toOrderDto(Order order) {
         Map<UUID, Long> productsMain = order.getProducts();
+        Map<UUID, Integer> productsDto = new HashMap<>();
+        for (UUID uuid : productsMain.keySet()) {
+            Integer i = Math.toIntExact(productsMain.get(uuid));
+            productsDto.put(uuid, i);
+        }
         return OrderDto.builder()
                 .orderId(order.getOrderId())
                 .shoppingCartId(order.getCartId())
-                .products(order.getProducts())
+                .products(productsDto)
                 .paymentId(order.getPaymentId())
                 .deliveryId(order.getDeliveryId())
                 .state(order.getState())
@@ -42,7 +47,7 @@ public class OrderMapper {
      * @param orderDto трансферная сущность заказа
      * @return в сущность заказа
      */
-    public Order toOrder(OrderDto orderDto){
+    public Order toOrder(OrderDto orderDto) {
         Map<UUID, Integer> productsDto = orderDto.getProducts();
         Map<UUID, Long> productsIntermediate = new HashMap<>();
         for (UUID uuid : productsDto.keySet()) {
@@ -71,7 +76,7 @@ public class OrderMapper {
      * @param orderList Колллекция сущности заказа
      * @return траснферную колллекцию сущности заказа
      */
-    public List<OrderDto> orderDtoList(List<Order> orderList){
+    public List<OrderDto> orderDtoList(List<Order> orderList) {
         List<OrderDto> orderDtoList = new ArrayList<>();
         for (Order order : orderList) {
             OrderDto orderDto = toOrderDto(order);

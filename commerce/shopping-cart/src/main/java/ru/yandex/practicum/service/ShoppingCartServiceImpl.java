@@ -3,10 +3,12 @@ package ru.yandex.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.client.WarehouseClient;
 import ru.yandex.practicum.error.NoProductsInShoppingCartException;
 import ru.yandex.practicum.error.NotAuthorizedUserException;
 import ru.yandex.practicum.error.NotFoundException;
 import ru.yandex.practicum.mapper.ShoppingCartMapper;
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCart;
 import ru.yandex.practicum.model.ShoppingCartDto;
@@ -30,6 +32,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * Маппер корзины продуктов
      */
     private final ShoppingCartMapper mapper;
+
+    private final WarehouseClient warehouseClient;
 
     /**
      * Хранилище сущности
@@ -134,5 +138,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .userName(userName)
                 .products(new HashMap<>())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public BookedProductsDto bookProducts(String userName) {
+        ShoppingCartDto cartDto = mapper.toShoppingCartDto(getCartOrThrow(userName));
+        return warehouseClient.checkProductQuantityEnoughForShoppingCart(cartDto);
+    }
+
+    private ShoppingCart getCartOrThrow(String userName) {
+        return repository.findByUserName(userName)
+                .orElseThrow(() -> new NotFoundException("Cart not found for user: " + userName));
     }
 }

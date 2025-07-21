@@ -13,6 +13,7 @@ import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.repository.WarehouseProductRepository;
 import ru.yandex.practicum.util.AddressUtil;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -115,6 +116,48 @@ public class WarehouseProductServiceImpl implements WarehouseProductService {
         bookingRepository.save(booking);
     }
 
+    @Override
+    @Transactional
+    public void acceptReturn(Map<UUID, Integer> products) {
+        Map<UUID, WarehouseProduct> warehouseProducts = getWarehouseProducts(products.keySet());
+        for (Map.Entry<UUID, Integer> product : products.entrySet()) {
+            WarehouseProduct warehouseProduct = warehouseProducts.get(product.getKey());
+            warehouseProduct.setQuantity(warehouseProduct.getQuantity() + product.getValue());
+        }
+        saveWarehouseRemains(warehouseProducts.values());
+    }
+
+    @Override
+    @Transactional
+    public BookedProductsDto assemblyProductsForOrder(AssemblyRequest request) {
+        Map<UUID, Long> orderProducts = request.getProducts();
+        Map<UUID, WarehouseProduct> products = getWarehouseProducts(orderProducts.keySet());
+
+        double weight = 0;
+        double volume = 0;
+        boolean fragile = false;
+        for (Map.Entry<UUID, Long> cartProduct : orderProducts.entrySet()) {
+            WarehouseProduct product = products.get(cartProduct.getKey());
+            long newQuantity = product.getQuantity() - cartProduct.getValue();
+            if (newQuantity < 0) {
+                throw new ProductInShoppingCartLowQuantityInWarehouse(
+                        "Ошибка, товар из корзины не находится в требуемом количестве на складе");
+            }
+            product.setQuantity(newQuantity);
+            weight += product.getWeight() * cartProduct.getValue();
+            volume += product.getHeight() * product.getWeight() * product.getDepth() * cartProduct.getValue();
+            fragile = fragile || product.isFragile();
+        }
+        addBooking(request);
+        saveWarehouseRemains(products.values());
+
+        return new BookedProductsDto(
+                weight,
+                volume,
+                fragile
+        );
+    }
+
     private WarehouseProduct getWarehouseProduct(UUID productId) {
         return repository.findById(productId).orElseThrow(
                 () -> new NoSpecifiedProductInWarehouseException("Нет информации о товаре на складе")
@@ -125,5 +168,28 @@ public class WarehouseProductServiceImpl implements WarehouseProductService {
         return bookingRepository.findById(orderId).orElseThrow(
                 () -> new NotFoundException("Нет информации о бронировании товаров по заказу")
         );
+    }
+
+    void addBooking(AssemblyRequest request) {
+        Booking booking = Booking.builder()
+                .orderId(request.getOrderId())
+                .products(request.getProducts())
+                .build();
+        bookingRepository.save(booking);
+    }
+
+    Map<UUID, WarehouseProduct> getWarehouseProducts(Collection<UUID> ids) {
+        Map<UUID, WarehouseProduct> products = repository.findAllById(ids)
+                .stream()
+                .collect(Collectors.toMap(WarehouseProduct::getProductId, Function.identity()));
+        if (products.size() != ids.size()) {
+            throw new ProductInShoppingCartLowQuantityInWarehouse("Некоторых товаров нет на складе");
+        }
+
+        return products;
+    }
+
+    void saveWarehouseRemains(Collection<WarehouseProduct> products) {
+        repository.saveAll(products);
     }
 }

@@ -9,98 +9,115 @@ import java.util.UUID;
 
 public interface OrderService {
     /**
-     * Получить заказы пользователя.
+     * Получить список заказов
      *
-     * @param userName имя пользователя
-     * @return Список всех заказов пользователя
+     * @param userName Имя пользователя
+     * @return список заказов
      */
     List<OrderDto> getClientOrders(String userName);
 
     /**
-     * Создать новый заказ в системе.
+     * Создание нового заказа
      *
-     * @param createNewOrderRequest новый заказа
-     * @return Оформленный заказ пользователя
+     * @param request сущность нового заказа
+     * @return трансферная сущность заказа
      */
-    OrderDto createNewOrder(CreateNewOrderRequest createNewOrderRequest);
+    OrderDto createNewOrder(CreateNewOrderRequest request);
 
     /**
-     * Возврат заказа.
+     * Возврат заказа
      *
-     * @param productReturnRequest Запрос на возврат заказа.
-     * @return Заказ пользователя после сборки
+     * @param request запрос возврата заказа
+     * @return трансферная сущность заказа
      */
-    OrderDto productReturn(ProductReturnRequest productReturnRequest);
+    OrderDto returnProducts(ProductReturnRequest request);
 
     /**
      * Оплата заказа
      *
-     * @param id уникальный идентификатор корзины
+     * @param orderId уникальный идентификатор корзины
      * @return трансферная сущность заказа
      */
-    OrderDto payment(UUID id);
+    OrderDto payOrder(UUID orderId);
 
     /**
-     * Оплата заказа произошла с ошибкой.
+     * Доставка заказа.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после ошибки оплаты
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto paymentFailed(UUID id);
-
-    /**
-     * Заказ пользователя после доставки
-     *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после доставки
-     */
-    OrderDto delivery(UUID id);
+    OrderDto deliverOrder(UUID orderId);
 
     /**
      * Доставка заказа произошла с ошибкой.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после ошибки доставки
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto deliveryFailed(UUID id);
+    OrderDto failDeliverOrder(UUID orderId);
 
     /**
      * Завершение заказа.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после всех стадий и завершенный
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto complete(UUID id);
+    OrderDto completeOrder(UUID orderId);
 
     /**
      * Расчёт стоимости заказа.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя с расчётом общей стоимости
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto calculateTotalCost(UUID id);
+    OrderDto calculateTotalPrice(UUID orderId);
 
     /**
      * Расчёт стоимости доставки заказа.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя с расчётом доставки
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto calculateDeliveryCost(UUID id);
+    OrderDto calculateDeliveryPrice(UUID orderId);
 
     /**
      * Сборка заказа.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после сборки
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto assembly(UUID id);
+    OrderDto assemblyOrder(UUID orderId);
 
     /**
      * Сборка заказа произошла с ошибкой.
      *
-     * @param id Идентификатор заказа.
-     * @return Заказ пользователя после ошибки сборки
+     * @param orderId уникальный идентификатор корзины
+     * @return трансферная сущность заказа
      */
-    OrderDto assemblyFailed(UUID id);
+    OrderDto failAssemblyOrder(UUID orderId);
+
+    /**
+     * Успешный платежный ордер
+     *
+     * @param orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    OrderDto successPayOrder(UUID orderId);
+
+    /**
+     * Ошибка при заказе
+     *
+     * @param orderId orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    OrderDto failPayOrder(UUID orderId);
+
+    /**
+     * Получить заказ
+     *
+     * @param orderId orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+
+    OrderDto getOrderDetails(UUID orderId);
 }

@@ -45,7 +45,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/return")
-    OrderDto productReturn(@RequestBody @Valid ProductReturnRequest request);
+    OrderDto returnProducts(@RequestBody @Valid ProductReturnRequest request);
 
     /**
      * Оплата заказа
@@ -54,7 +54,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/payment")
-    OrderDto payment(@RequestBody @NotNull UUID orderId);
+    OrderDto payOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Оплата заказа произошла с ошибкой.
@@ -90,7 +90,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/completed")
-    OrderDto complete(@RequestBody @NotNull UUID orderId);
+    OrderDto completeOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Расчёт стоимости заказа.
@@ -99,7 +99,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/calculate/total")
-    OrderDto calculateTotalCost(@RequestBody @NotNull UUID orderId);
+    OrderDto calculateTotalPrice(@RequestBody @NotNull UUID orderId);
 
     /**
      * Расчёт стоимости доставки заказа.
@@ -108,7 +108,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/calculate/delivery")
-    OrderDto calculateDeliveryCost(@RequestBody @NotNull UUID orderId);
+    OrderDto calculateDeliveryPrice(@RequestBody @NotNull UUID orderId);
 
     /**
      * Сборка заказа.
@@ -117,7 +117,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/assembly")
-    OrderDto assembly(@RequestBody @NotNull UUID orderId);
+    OrderDto assemblyOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Сборка заказа произошла с ошибкой.
@@ -126,7 +126,7 @@ public interface OrderClient {
      * @return трансферная сущность заказа
      */
     @PostMapping("/assembly/failed")
-    OrderDto assemblyFailed(@RequestBody @NotNull UUID orderId);
+    OrderDto failAssemblyOrder(@RequestBody @NotNull UUID orderId);
 
     /**
      * Успешный платежный ордер
@@ -145,4 +145,13 @@ public interface OrderClient {
      */
     @PostMapping("/payment/failed")
     OrderDto failPayOrder(@RequestBody @NotNull UUID orderId);
+
+    /**
+     * Получить заказ
+     *
+     * @param orderId orderId идентификатор корзины
+     * @return трансферная сущность заказа
+     */
+    @GetMapping("/only")
+    OrderDto getOrder(@RequestBody @NotNull UUID orderId);
 }
