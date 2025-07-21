@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.model.Order;
 import ru.yandex.practicum.model.OrderDto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Маппер заказа
@@ -20,9 +19,10 @@ public class OrderMapper {
      * @return трансферная сущность заказа
      */
     public OrderDto toOrderDto(Order order){
+        Map<UUID, Long> productsMain = order.getProducts();
         return OrderDto.builder()
                 .orderId(order.getOrderId())
-                .shoppingCartId(order.getShoppingCartId())
+                .shoppingCartId(order.getCartId())
                 .products(order.getProducts())
                 .paymentId(order.getPaymentId())
                 .deliveryId(order.getDeliveryId())
@@ -43,10 +43,16 @@ public class OrderMapper {
      * @return в сущность заказа
      */
     public Order toOrder(OrderDto orderDto){
+        Map<UUID, Integer> productsDto = orderDto.getProducts();
+        Map<UUID, Long> productsIntermediate = new HashMap<>();
+        for (UUID uuid : productsDto.keySet()) {
+            Integer i = productsDto.get(uuid);
+            productsIntermediate.put(uuid, Long.valueOf(i));
+        }
         return Order.builder()
                 .orderId(orderDto.getOrderId())
-                .shoppingCartId(orderDto.getShoppingCartId())
-                .products(orderDto.getProducts())
+                .cartId(orderDto.getShoppingCartId())
+                .products(productsIntermediate)
                 .paymentId(orderDto.getPaymentId())
                 .deliveryId(orderDto.getDeliveryId())
                 .state(orderDto.getState())
