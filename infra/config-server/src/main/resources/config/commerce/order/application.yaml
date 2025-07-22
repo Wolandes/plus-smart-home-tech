@@ -11,7 +11,7 @@ spring:
       enabled: ALWAYS
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6432/order
+    url: jdbc:postgresql://localhost:6432/orders
     username: commerce
     password: commerce
 

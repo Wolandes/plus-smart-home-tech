@@ -37,7 +37,7 @@ public interface ShoppingStoreClient {
      * @return ProductDto - Список товаров в пагинацией
      */
     @GetMapping(BASE_PATH)
-    ProductsDto getProducts(ProductCategory category, Pageable pageable);
+    ProductsDto getProducts(@RequestParam @Valid ProductCategory category, @RequestBody Pageable pageable);
 
     /**
      * Создание нового товара в ассортименте
@@ -73,7 +73,7 @@ public interface ShoppingStoreClient {
      * @return Изменение ProductDto
      */
     @PostMapping(QUANTITY_STATE_PATH)
-    ProductDto setProductQuantityState(SetProductQuantityStateRequest setProductQuantityStateRequest);
+    ProductDto setProductQuantityState(@RequestBody @Valid SetProductQuantityStateRequest setProductQuantityStateRequest);
 
     /**
      * Получить сведения по товару из БД.
@@ -91,5 +91,5 @@ public interface ShoppingStoreClient {
      * @return продукты
      */
     @GetMapping("/onlyIds")
-    public List<ProductDto> getProductByIds(Collection<UUID> ids);
+    public List<ProductDto> getProductByIds(@RequestParam Collection<UUID> ids);
 }
