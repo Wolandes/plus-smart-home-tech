@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.*;
 import ru.yandex.practicum.service.WarehouseProductService;
 
+import java.util.Map;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/warehouse")
 @RequiredArgsConstructor
@@ -53,5 +56,23 @@ public class WarehouseController implements WarehouseClient {
     @GetMapping(ADDRESS_ENDPOINT)
     public AddressDto getWarehouseAddress(){
         return service.getWarehouseAddress();
+    }
+
+    @Override
+    @PostMapping("/shipped")
+    public void shippedToDelivery(@RequestBody @Valid DeliveryRequest request) {
+        service.shippedToDelivery(request);
+    }
+
+    @Override
+    @PostMapping("/return")
+    public void acceptReturn(@RequestBody @Valid Map<UUID, Integer> products) {
+        service.acceptReturn(products);
+    }
+
+    @Override
+    @PostMapping("/assembly")
+    public BookedProductsDto assemblyProductsForOrder(@RequestBody @Valid AssemblyRequest request) {
+        return service.assemblyProductsForOrder(request);
     }
 }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.client;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.util.ValidationUtil;
@@ -91,4 +92,12 @@ public interface ShoppingCartClient {
     ShoppingCartDto changeProductQuantity(@RequestParam(USERNAME_PARAM) @NotBlank(message = VALIDATION_MESSAGE) String userName,
                                           @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest);
 
+    /**
+     * Получить зарезервированные продукты
+     *
+     * @param userName имя пользователя
+     * @return зарезервированные продукты
+     */
+    @PostMapping(BOOKING_PATH)
+    BookedProductsDto bookProducts(@RequestParam(USERNAME_PARAM) @NotBlank(message = VALIDATION_MESSAGE) String userName);
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.service;
 
 import ru.yandex.practicum.model.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +15,6 @@ public interface ShoppingStoreService {
      *
      * @param category - Категория устройств
      * @param pageable - Пагинация
-     *
      * @return ProductDto - Список товаров в пагинацией
      */
     ProductsDto getProducts(ProductCategory category, Pageable pageable);
@@ -30,15 +30,15 @@ public interface ShoppingStoreService {
     /**
      * Обновление товара в ассортименте, например уточнение описания, характеристик и т.д.
      *
-     * @param productDto    обновляемый товар
-     * @return  обновленный товар
+     * @param productDto обновляемый товар
+     * @return обновленный товар
      */
     ProductDto updateProduct(ProductDto productDto);
 
     /**
      * Удалить товар из ассортимента магазина. Функция для менеджерского состава.
      *
-     * @param uuid  id товара
+     * @param uuid id товара
      * @return void
      */
     boolean removeProductFromStore(UUID uuid);
@@ -54,9 +54,17 @@ public interface ShoppingStoreService {
     /**
      * Получить сведения по товару из БД.
      *
-     * @param productId     id сущности БД
+     * @param productId id сущности БД
      * @return Сущность DTO ProductDto
      */
     ProductDto getProduct(UUID productId);
+
+    /**
+     * Получить коллекцию продуктов
+     *
+     * @param ids id продуктов
+     * @return продукты
+     */
+    List<ProductDto> getProductByIds(Collection<UUID> ids);
 
 }

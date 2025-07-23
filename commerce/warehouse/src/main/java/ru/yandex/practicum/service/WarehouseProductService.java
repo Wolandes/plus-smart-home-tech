@@ -2,6 +2,9 @@ package ru.yandex.practicum.service;
 
 import ru.yandex.practicum.model.*;
 
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * Сервис склада
  */
@@ -34,4 +37,15 @@ public interface WarehouseProductService {
      * @return трансферная сущность адресса товара
      */
     AddressDto getWarehouseAddress();
+
+    /**
+     * Запрос на доставку
+     *
+     * @param request запрос на доставку
+     */
+    void shippedToDelivery(DeliveryRequest request);
+
+    void acceptReturn(Map<UUID, Integer> products);
+
+    BookedProductsDto assemblyProductsForOrder(AssemblyRequest request);
 }

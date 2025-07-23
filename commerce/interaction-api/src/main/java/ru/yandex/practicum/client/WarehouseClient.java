@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.model.*;
 
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * Трансферный клиент склада
  */
@@ -60,4 +63,18 @@ public interface WarehouseClient {
      */
     @GetMapping(ADDRESS_ENDPOINT)
     AddressDto getWarehouseAddress();
+
+    /**
+     * Отправленный заказ
+     *
+     * @param request запрос на доставку
+     */
+    @PostMapping("/shipped")
+    void shippedToDelivery(@RequestBody @Valid DeliveryRequest request);
+
+    @PostMapping("/return")
+    void acceptReturn(@RequestBody @Valid Map<UUID, Integer> products);
+
+    @PostMapping("/assembly")
+    BookedProductsDto assemblyProductsForOrder(@RequestBody @Valid AssemblyRequest request);
 }

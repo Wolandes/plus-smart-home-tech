@@ -1,5 +1,6 @@
 package ru.yandex.practicum.service;
 
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCartDto;
 
@@ -52,4 +53,6 @@ public interface ShoppingCartService {
      * @return транферная сущность корзины пользователя
      */
     ShoppingCartDto changeProductQuantity(String userName, ChangeProductQuantityRequest changeProductQuantityRequest);
+
+    BookedProductsDto bookProducts(String userName);
 }

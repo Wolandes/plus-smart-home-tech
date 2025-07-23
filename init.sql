@@ -1,3 +1,9 @@
 create database shopping_store;
 create database shopping_cart;
 create database warehouse;
+create database orders;
+create database order_products;
+create database payment;
+create database address;
+create database delivery;
+create database address;

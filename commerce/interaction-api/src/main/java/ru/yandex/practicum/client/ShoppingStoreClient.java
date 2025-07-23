@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.*;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ShoppingStoreClient {
      * @return ProductDto - Список товаров в пагинацией
      */
     @GetMapping(BASE_PATH)
-    ProductsDto getProducts(ProductCategory category, Pageable pageable);
+    ProductsDto getProducts(@RequestParam @Valid ProductCategory category, @RequestBody Pageable pageable);
 
     /**
      * Создание нового товара в ассортименте
@@ -72,7 +73,7 @@ public interface ShoppingStoreClient {
      * @return Изменение ProductDto
      */
     @PostMapping(QUANTITY_STATE_PATH)
-    ProductDto setProductQuantityState(SetProductQuantityStateRequest setProductQuantityStateRequest);
+    ProductDto setProductQuantityState(@RequestBody @Valid SetProductQuantityStateRequest setProductQuantityStateRequest);
 
     /**
      * Получить сведения по товару из БД.
@@ -82,4 +83,13 @@ public interface ShoppingStoreClient {
      */
     @GetMapping("/{productId}")
     ProductDto getProduct(@PathVariable UUID productId);
+
+    /**
+     * Получить коллекцию продуктов
+     *
+     * @param ids id продуктов
+     * @return продукты
+     */
+    @GetMapping("/onlyIds")
+    public List<ProductDto> getProductByIds(@RequestParam Collection<UUID> ids);
 }

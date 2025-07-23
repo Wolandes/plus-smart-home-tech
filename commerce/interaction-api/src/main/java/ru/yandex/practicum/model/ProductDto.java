@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.UUID;
 
 /**
- *Трансферный объект, содержащий данные о продукте.
+ * Трансферный объект, содержащий данные о продукте.
  */
 @Data
 @Builder(toBuilder = true)

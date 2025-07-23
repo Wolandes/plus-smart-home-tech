@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.model.BookedProductsDto;
 import ru.yandex.practicum.model.ChangeProductQuantityRequest;
 import ru.yandex.practicum.model.ShoppingCartDto;
 import ru.yandex.practicum.service.ShoppingCartService;
@@ -82,5 +83,11 @@ public class ShoppingCartController implements ShoppingCartClient {
     public ShoppingCartDto changeProductQuantity(@NotBlank(message = ValidationUtil.VALIDATION_USERNAME_MESSAGE) String userName,
                                                  @RequestBody ChangeProductQuantityRequest changeProductQuantityRequest) {
         return service.changeProductQuantity(userName, changeProductQuantityRequest);
+    }
+
+    @Override
+    public BookedProductsDto bookProducts(
+            @NotBlank(message = ValidationUtil.VALIDATION_USERNAME_MESSAGE) String userName) {
+        return service.bookProducts(userName);
     }
 }
